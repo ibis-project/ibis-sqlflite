@@ -1,5 +1,4 @@
 """SQLFlite backend."""
-
 from __future__ import annotations
 
 import ast
@@ -35,6 +34,8 @@ from ibis.common.dispatch import lazy_singledispatch
 from ibis.expr.operations.udf import InputType
 from ibis.util import deprecated
 
+__version__ = "0.0.0"
+
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, MutableMapping, Sequence
     from urllib.parse import ParseResult
@@ -43,7 +44,6 @@ if TYPE_CHECKING:
     import polars as pl
     import torch
     from fsspec import AbstractFileSystem
-
 
 _UDF_INPUT_TYPE_MAPPING = {
     InputType.PYARROW: duckdb.functional.ARROW,
@@ -129,7 +129,8 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
             kwargs["use_encryption"] = kwargs.pop("useEncryption", "false").lower() == "true"
 
         if "disableCertificateVerification" in kwargs:
-            kwargs["disable_certificate_verification"] = kwargs.pop("disableCertificateVerification", "false").lower() == "true"
+            kwargs["disable_certificate_verification"] = kwargs.pop("disableCertificateVerification",
+                                                                    "false").lower() == "true"
 
         return self.connect(**kwargs)
 
@@ -159,26 +160,26 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return cur
 
     def _to_sqlglot(
-        self, expr: ir.Expr, limit: str | None = None, params=None, **_: Any
+            self, expr: ir.Expr, limit: str | None = None, params=None, **_: Any
     ):
         sql = super()._to_sqlglot(expr, limit=limit, params=params)
 
         return sql
 
     def create_table(
-        self,
-        name: str,
-        obj: ir.Table
-        | pd.DataFrame
-        | pa.Table
-        | pl.DataFrame
-        | pl.LazyFrame
-        | None = None,
-        *,
-        schema: ibis.Schema | None = None,
-        database: str | None = None,
-        temp: bool = False,
-        overwrite: bool = False,
+            self,
+            name: str,
+            obj: ir.Table
+                 | pd.DataFrame
+                 | pa.Table
+                 | pl.DataFrame
+                 | pl.LazyFrame
+                 | None = None,
+            *,
+            schema: ibis.Schema | None = None,
+            database: str | None = None,
+            temp: bool = False,
+            overwrite: bool = False,
     ):
         """Create a table in SQLFlite.
 
@@ -324,7 +325,7 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return self.table(name, database=(catalog, database))
 
     def table(
-        self, name: str, schema: str | None = None, database: str | None = None
+            self, name: str, schema: str | None = None, database: str | None = None
     ) -> ir.Table:
         """Construct a table expression.
 
@@ -360,11 +361,11 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         ).to_expr()
 
     def get_schema(
-        self,
-        table_name: str,
-        *,
-        catalog: str | None = None,
-        database: str | None = None,
+            self,
+            table_name: str,
+            *,
+            catalog: str | None = None,
+            database: str | None = None,
     ) -> sch.Schema:
         """Compute the schema of a `table`.
 
@@ -439,7 +440,7 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return self._filter_with_like(dbs.to_pylist(), like)
 
     def list_databases(
-        self, like: str | None = None, catalog: str | None = None
+            self, like: str | None = None, catalog: str | None = None
     ) -> list[str]:
         col = "schema_name"
         query = sg.select(sge.Distinct(expressions=[sg.column(col)])).from_(
@@ -461,16 +462,16 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return version
 
     def do_connect(
-        self,
-        host: str | None = None,
-        user: str | None = None,
-        password: str | None = None,
-        port: int = 31337,
-        database: str | None = None,
-        schema: str | None = None,
-        use_encryption: bool | None = None,
-        disable_certificate_verification: bool | None = None,
-        **kwargs: Any,
+            self,
+            host: str | None = None,
+            user: str | None = None,
+            password: str | None = None,
+            port: int = 31337,
+            database: str | None = None,
+            schema: str | None = None,
+            use_encryption: bool | None = None,
+            disable_certificate_verification: bool | None = None,
+            **kwargs: Any,
     ) -> None:
         """Create an Ibis client connected to SQLFlite database.
 
@@ -552,7 +553,7 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         self._record_batch_readers_consumed = {}
 
     def create_database(
-        self, name: str, catalog: str | None = None, force: bool = False
+            self, name: str, catalog: str | None = None, force: bool = False
     ) -> None:
         if catalog is not None:
             raise exc.UnsupportedOperationError(
@@ -564,7 +565,7 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
             pass
 
     def drop_database(
-        self, name: str, catalog: str | None = None, force: bool = False
+            self, name: str, catalog: str | None = None, force: bool = False
     ) -> None:
         if catalog is not None:
             raise exc.UnsupportedOperationError(
@@ -580,10 +581,10 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         instead="use the explicit `read_*` method for the filetype you are trying to read, e.g., read_parquet, read_csv, etc.",
     )
     def register(
-        self,
-        source: str | Path | Any,
-        table_name: str | None = None,
-        **kwargs: Any,
+            self,
+            source: str | Path | Any,
+            table_name: str | None = None,
+            **kwargs: Any,
     ) -> ir.Table:
         """Register a data source as a table in the current database.
 
@@ -619,18 +620,18 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
                 self._register_failure()
 
         if first.startswith(("parquet://", "parq://")) or first.endswith(
-            ("parq", "parquet")
+                ("parq", "parquet")
         ):
             return self.read_parquet(source, table_name=table_name, **kwargs)
         elif first.startswith(
-            ("csv://", "csv.gz://", "txt://", "txt.gz://")
+                ("csv://", "csv.gz://", "txt://", "txt.gz://")
         ) or first.endswith(("csv", "csv.gz", "tsv", "tsv.gz", "txt", "txt.gz")):
             return self.read_csv(source, table_name=table_name, **kwargs)
         elif first.startswith(("postgres://", "postgresql://")):
             return self.read_postgres(source, table_name=table_name, **kwargs)
         elif first.startswith("sqlite://"):
             return self.read_sqlite(
-                first[len("sqlite://") :], table_name=table_name, **kwargs
+                first[len("sqlite://"):], table_name=table_name, **kwargs
             )
         else:
             self._register_failure()  # noqa: RET503
@@ -648,10 +649,10 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
 
     @util.experimental
     def read_json(
-        self,
-        source_list: str | list[str] | tuple[str],
-        table_name: str | None = None,
-        **kwargs,
+            self,
+            source_list: str | list[str] | tuple[str],
+            table_name: str | None = None,
+            **kwargs,
     ) -> ir.Table:
         """Read newline-delimited JSON into an ibis table.
 
@@ -693,10 +694,10 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return self.table(table_name)
 
     def read_csv(
-        self,
-        source_list: str | list[str] | tuple[str],
-        table_name: str | None = None,
-        **kwargs: Any,
+            self,
+            source_list: str | list[str] | tuple[str],
+            table_name: str | None = None,
+            **kwargs: Any,
     ) -> ir.Table:
         """Register a CSV file as a table in the current database.
 
@@ -754,10 +755,10 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return self.table(table_name)
 
     def read_parquet(
-        self,
-        source_list: str | Iterable[str],
-        table_name: str | None = None,
-        **kwargs: Any,
+            self,
+            source_list: str | Iterable[str],
+            table_name: str | None = None,
+            **kwargs: Any,
     ) -> ir.Table:
         """Register a parquet file as a table in the current database.
 
@@ -792,7 +793,7 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return self.table(table_name)
 
     def _read_parquet_duckdb_native(
-        self, source_list: str | Iterable[str], table_name: str, **kwargs: Any
+            self, source_list: str | Iterable[str], table_name: str, **kwargs: Any
     ) -> None:
         options = [
             sg.to_identifier(key).eq(sge.convert(val)) for key, val in kwargs.items()
@@ -803,7 +804,7 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         )
 
     def _read_parquet_pyarrow_dataset(
-        self, source_list: str | Iterable[str], table_name: str, **kwargs: Any
+            self, source_list: str | Iterable[str], table_name: str, **kwargs: Any
     ) -> None:
         import pyarrow.dataset as ds
 
@@ -818,14 +819,14 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         # explicitly.
 
     def read_in_memory(
-        # TODO: deprecate this in favor of `create_table`
-        self,
-        source: pd.DataFrame
-        | pa.Table
-        | pa.RecordBatchReader
-        | pl.DataFrame
-        | pl.LazyFrame,
-        table_name: str | None = None,
+            # TODO: deprecate this in favor of `create_table`
+            self,
+            source: pd.DataFrame
+                    | pa.Table
+                    | pa.RecordBatchReader
+                    | pl.DataFrame
+                    | pl.LazyFrame,
+            table_name: str | None = None,
     ) -> ir.Table:
         """Register an in-memory table object in the current database.
 
@@ -851,7 +852,7 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return self.table(table_name)
 
     def read_delta(
-        self, source_table: str, table_name: str | None = None, **kwargs: Any
+            self, source_table: str, table_name: str | None = None, **kwargs: Any
     ) -> ir.Table:
         """Register a Delta Lake table as a table in the current database.
 
@@ -887,10 +888,10 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return self.table(table_name)
 
     def list_tables(
-        self,
-        like: str | None = None,
-        database: tuple[str, str] | str | None = None,
-        schema: str | None = None,
+            self,
+            like: str | None = None,
+            database: tuple[str, str] | str | None = None,
+            schema: str | None = None,
     ) -> list[str]:
         """List tables and views.
 
@@ -971,7 +972,7 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return self._filter_with_like(out[col].to_pylist(), like)
 
     def read_postgres(
-        self, uri: str, *, table_name: str | None = None, database: str = "public"
+            self, uri: str, *, table_name: str | None = None, database: str = "public"
     ) -> ir.Table:
         """Register a table from a postgres instance into a DuckDB table.
 
@@ -1015,11 +1016,11 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return self.table(table_name)
 
     def read_mysql(
-        self,
-        uri: str,
-        *,
-        catalog: str,
-        table_name: str | None = None,
+            self,
+            uri: str,
+            *,
+            catalog: str,
+            table_name: str | None = None,
     ) -> ir.Table:
         """Register a table from a MySQL instance into a DuckDB table.
 
@@ -1054,7 +1055,7 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         return self.table(table_name, database=(catalog, database))
 
     def attach(
-        self, path: str | Path, name: str | None = None, read_only: bool = False
+            self, path: str | Path, name: str | None = None, read_only: bool = False
     ) -> None:
         """Attach another DuckDB database to the current DuckDB session.
 
@@ -1152,11 +1153,11 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         super()._run_pre_execute_hooks(expr)
 
     def _to_pyarrow_table(
-        self,
-        expr: ir.Expr,
-        *,
-        params: Mapping[ir.Scalar, Any] | None = None,
-        limit: int | str | None = None,
+            self,
+            expr: ir.Expr,
+            *,
+            params: Mapping[ir.Scalar, Any] | None = None,
+            limit: int | str | None = None,
     ) -> pa.Table:
         """Preprocess the expr, and return a ``pyarrow.Table`` object.
         """
@@ -1167,13 +1168,13 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
             return cur.fetch_arrow_table()
 
     def to_pyarrow_batches(
-        self,
-        expr: ir.Expr,
-        *,
-        params: Mapping[ir.Scalar, Any] | None = None,
-        limit: int | str | None = None,
-        chunk_size: int = 1_000_000,
-        **_: Any,
+            self,
+            expr: ir.Expr,
+            *,
+            params: Mapping[ir.Scalar, Any] | None = None,
+            limit: int | str | None = None,
+            chunk_size: int = 1_000_000,
+            **_: Any,
     ) -> pa.ipc.RecordBatchReader:
         """Return a stream of record batches.
 
@@ -1209,21 +1210,21 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
         )
 
     def to_pyarrow(
-        self,
-        expr: ir.Expr,
-        *,
-        params: Mapping[ir.Scalar, Any] | None = None,
-        limit: int | str | None = None,
-        **_: Any,
+            self,
+            expr: ir.Expr,
+            *,
+            params: Mapping[ir.Scalar, Any] | None = None,
+            limit: int | str | None = None,
+            **_: Any,
     ) -> pa.Table:
         return self._to_pyarrow_table(expr, params=params, limit=limit)
 
     def execute(
-        self,
-        expr: ir.Expr,
-        params: Mapping | None = None,
-        limit: str | None = "default",
-        **_: Any,
+            self,
+            expr: ir.Expr,
+            params: Mapping | None = None,
+            limit: str | None = "default",
+            **_: Any,
     ) -> Any:
         """Execute an expression."""
         import pandas as pd
@@ -1236,11 +1237,11 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
                 name: (
                     col.to_pylist()
                     if (
-                        pat.is_nested(col.type)
-                        or
-                        # pyarrow / duckdb type null literals columns as int32?
-                        # but calling `to_pylist()` will render it as None
-                        col.null_count
+                            pat.is_nested(col.type)
+                            or
+                            # pyarrow / duckdb type null literals columns as int32?
+                            # but calling `to_pylist()` will render it as None
+                            col.null_count
                     )
                     else col.to_pandas()
                 )
@@ -1252,12 +1253,12 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
 
     @util.experimental
     def to_torch(
-        self,
-        expr: ir.Expr,
-        *,
-        params: Mapping[ir.Scalar, Any] | None = None,
-        limit: int | str | None = None,
-        **kwargs: Any,
+            self,
+            expr: ir.Expr,
+            *,
+            params: Mapping[ir.Scalar, Any] | None = None,
+            limit: int | str | None = None,
+            **kwargs: Any,
     ) -> dict[str, torch.Tensor]:
         """Execute an expression and return results as a dictionary of torch tensors.
 
@@ -1282,12 +1283,12 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
 
     @util.experimental
     def to_parquet(
-        self,
-        expr: ir.Table,
-        path: str | Path,
-        *,
-        params: Mapping[ir.Scalar, Any] | None = None,
-        **kwargs: Any,
+            self,
+            expr: ir.Table,
+            path: str | Path,
+            *,
+            params: Mapping[ir.Scalar, Any] | None = None,
+            **kwargs: Any,
     ) -> None:
         """Write the results of executing the given expression to a parquet file.
 
@@ -1340,13 +1341,13 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
 
     @util.experimental
     def to_csv(
-        self,
-        expr: ir.Table,
-        path: str | Path,
-        *,
-        params: Mapping[ir.Scalar, Any] | None = None,
-        header: bool = True,
-        **kwargs: Any,
+            self,
+            expr: ir.Table,
+            path: str | Path,
+            *,
+            params: Mapping[ir.Scalar, Any] | None = None,
+            header: bool = True,
+            **kwargs: Any,
     ) -> None:
         """Write the results of executing the given expression to a CSV file.
 
@@ -1389,8 +1390,8 @@ class Backend(SQLBackend, CanCreateDatabase, CanCreateSchema, UrlFromPath):
             {
                 name: type_mapper.from_string(typ, nullable=null == "YES")
                 for name, typ, null in zip(
-                    rows["column_name"], rows["column_type"], rows["null"]
-                )
+                rows["column_name"], rows["column_type"], rows["null"]
+            )
             }
         )
 

@@ -39,7 +39,7 @@ python3 -m venv .venv
 pip install --upgrade pip setuptools wheel
 
 # Install Spark Connect Proxy - in editable mode with client and dev dependencies
-pip install --editable .[test]
+pip install --editable .[dev,test]
 ```
 
 ### Note
@@ -123,4 +123,13 @@ You should see output:
 1            N            F    8971.00    12384801.37    11798257.21    12282485.06   25.78  35588.51     0.05          348
 2            N            O  765251.00  1072862302.10  1019517788.99  1060424708.62   25.47  35703.76     0.05        30049
 3            R            F  381449.00   534594445.35   507996454.41   528524219.36   25.60  35874.01     0.05        14902
+```
+
+### Handy development commands
+
+#### Version management
+
+##### Bump the version of the application - (you must have installed from source with the [dev] extras)
+```bash
+bumpver update --patch
 ```
