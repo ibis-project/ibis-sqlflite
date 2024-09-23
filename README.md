@@ -68,9 +68,6 @@ docker run --name sqlflite \
 
 Next - connect to the SQLFlite server from Python using Ibis by running this Python code:
 ```python
-imoprt ibis
-from ibis import _
-
 import os
 import ibis
 from ibis import _
