@@ -1,5 +1,5 @@
 # ibis-sqlflite
-An Ibis back-end for [SQLFlite](https://github.com/voltrondata/sqlflite)
+An [Ibis](https://ibis-project.org) back-end for [SQLFlite](https://github.com/voltrondata/sqlflite)
 
 [<img src="https://img.shields.io/badge/GitHub-prmoore77%2Fibis--sqlflite-blue.svg?logo=Github">](https://github.com/prmoore77/ibis-sqlflite)
 [![ibis-sqlflite-ci](https://github.com/prmoore77/ibis-sqlflite/actions/workflows/ci.yml/badge.svg)](https://github.com/prmoore77/ibis-sqlflite/actions/workflows/ci.yml)
