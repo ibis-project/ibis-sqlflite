@@ -1,15 +1,27 @@
 [build-system]
-requires = [
-  "setuptools>=61.0.0",
-  "tomli; python_version < '3.11'",
-  "setuptools_scm[toml]>=6.2.0",
-]
+requires      = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["ibis_sqlflite"]
+
+[tool.setuptools.packages.find]
+where = ["./ibis_sqlflite"]  # list of folders that contain the packages (["."] by default)
+include = ["*"]  # package names should match these glob patterns (["*"] by default)
 
 [project]
 name = "ibis-sqlflite"
 version = "0.0.1"
 description = "An Ibis backend for SQLFlite"
+readme = "README.md"
+authors = [{ name = "Philip Moore", email = "prmoore77@hotmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["ibis", "sqlflite", "ibis-framework"]
 dependencies = [
   "duckdb==1.1.0",
   "adbc-driver-flightsql",
@@ -21,9 +33,6 @@ dependencies = [
   "rich",
 ]
 requires-python = ">=3.9"
-
-[tool.setuptools]
-packages = ["ibis_sqlflite"]
 
 [project.entry-points."ibis.backends"]
 sqlflite = "ibis_sqlflite"
@@ -45,58 +54,8 @@ dev = [
   "bumpver"
 ]
 
-[tool.ruff]
-exclude = ["__init__.py"]
-respect-gitignore = true
-line-length = 90
-[tool.ruff.lint]
-ignore = ["D202", "D203", "E203", "E741"]
-[tool.ruff.lint.isort]
-known-first-party = ["ibis"]
-
-
-[tool.pytest.ini_options]
-xfail_strict = true
-markers = [
-  "backend: tests specific to a backend",
-  "benchmark: benchmarks",
-  "core: tests that do not required a backend",
-  "examples: tests that exercise examples",
-  "geospatial: tests for geospatial functionality",
-  "xfail_version: backend tests that for a specific version of a dependency",
-  "notimpl: We could implement/fix this in ibis, but haven't yet",
-  "notyet: This requires upstream to implement/fix something. We can't/won't workaround on the ibis side",
-  "never: The backend will never support this / pass this test. Don't bother trying to fix it",
-  "bigquery: BigQuery tests",
-  "clickhouse: ClickHouse tests",
-  "datafusion: Apache Datafusion tests",
-  "dask: dask tests",
-  "pandas: pandas tests",
-  "druid: Apache Druid tests",
-  "duckdb: DuckDB tests",
-  "exasol: ExasolDB tests",
-  "flink: Flink tests",
-  "impala: Apache Impala tests",
-  "mysql: MySQL tests",
-  "mssql: MS SQL Server tests",
-  "oracle: Oracle tests",
-  "polars: Polars tests",
-  "postgres: PostgreSQL tests",
-  "risingwave: RisingWave tests",
-  "pyspark: PySpark tests",
-  "snowflake: Snowflake tests",
-  "sqlite: SQLite tests",
-  "trino: Trino tests",
-  "sqlflite: Sqlflite tests",
-  "tpch: TPC-H tests",
-  "tpcds: TPC-DS tests",
-]
-filterwarnings = [
-  "ignore:distutils Version classes:DeprecationWarning",
-  "ignore:Deprecated call to `pkg_resources:DeprecationWarning",
-  "ignore:pkg_resources is deprecated:DeprecationWarning",
-]
-norecursedirs = ["build", "ci"]
+[project.urls]
+Homepage = "https://github.com/prmoore77/ibis-sqlflite"
 
 [tool.bumpver]
 current_version = "0.0.1"
