@@ -5,10 +5,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = ["ibis_sqlflite"]
 
-[tool.setuptools.packages.find]
-where = ["./ibis_sqlflite"]  # list of folders that contain the packages (["."] by default)
-include = ["*"]  # package names should match these glob patterns (["*"] by default)
-
 [project]
 name = "ibis-sqlflite"
 version = "0.0.1"
